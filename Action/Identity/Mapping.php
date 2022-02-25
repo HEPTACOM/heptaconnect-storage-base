@@ -2,31 +2,44 @@
 
 declare(strict_types=1);
 
-namespace Heptacom\HeptaConnect\Storage\Base\MappingPersister\Exception;
+namespace Heptacom\HeptaConnect\Storage\Base\Action\Identity;
 
+use Heptacom\HeptaConnect\Portal\Base\Mapping\Contract\MappingInterface;
 use Heptacom\HeptaConnect\Portal\Base\StorageKey\Contract\MappingNodeKeyInterface;
 use Heptacom\HeptaConnect\Portal\Base\StorageKey\Contract\PortalNodeKeyInterface;
 
-class MappingConflictException extends \Exception
+final class Mapping implements MappingInterface
 {
-    public const FORMAT = 'Conflicting mapping; PortalNode: %s; MappingNode: %s; PrimaryKey: %s';
+    private ?string $externalId;
 
     private PortalNodeKeyInterface $portalNodeKey;
 
     private MappingNodeKeyInterface $mappingNodeKey;
 
-    private string $externalId;
+    private string $entityType;
 
     public function __construct(
-        string $message,
+        ?string $externalId,
         PortalNodeKeyInterface $portalNodeKey,
         MappingNodeKeyInterface $mappingNodeKey,
-        string $externalId
+        string $entityType
     ) {
-        parent::__construct($message);
+        $this->externalId = $externalId;
         $this->portalNodeKey = $portalNodeKey;
         $this->mappingNodeKey = $mappingNodeKey;
+        $this->entityType = $entityType;
+    }
+
+    public function getExternalId(): ?string
+    {
+        return $this->externalId;
+    }
+
+    public function setExternalId(?string $externalId): MappingInterface
+    {
         $this->externalId = $externalId;
+
+        return $this;
     }
 
     public function getPortalNodeKey(): PortalNodeKeyInterface
@@ -39,8 +52,8 @@ class MappingConflictException extends \Exception
         return $this->mappingNodeKey;
     }
 
-    public function getExternalId(): string
+    public function getEntityType(): string
     {
-        return $this->externalId;
+        return $this->entityType;
     }
 }
